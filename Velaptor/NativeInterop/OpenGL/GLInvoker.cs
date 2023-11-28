@@ -361,14 +361,14 @@ internal sealed class GLInvoker : IGLInvoker
     }
 
     /// <inheritdoc/>
-    public void BufferSubData(GLBufferTarget target, nint offset, nuint size, float[] data)
+    public void BufferSubData(GLBufferTarget target, nint offset, nuint size, in float[] data)
     {
         AddToGLCallStack($"{nameof(BufferSubData)}(GLBufferTarget target, nint offset, nuint size, float[] data)");
         unsafe
         {
             fixed (void* dataPtr = data)
             {
-                this.gl.BufferSubData((BufferTargetARB)target, offset, size, dataPtr);
+                this.gl.BufferSubData<float>((BufferTargetARB)target, offset, size, data);
             }
         }
     }
