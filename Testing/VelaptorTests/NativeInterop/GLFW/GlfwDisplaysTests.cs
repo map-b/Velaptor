@@ -19,7 +19,7 @@ using FluentAssertions;
 /// <summary>
 /// Tests the <see cref="GlfwDisplays"/> class.
 /// </summary>
-public unsafe class GlfwDisplaysTests
+public class GlfwDisplaysTests
 {
     private readonly Mock<IGlfwInvoker> mockGlfwInvoker;
     private readonly Mock<IPlatform> mockPlatform;
@@ -63,14 +63,17 @@ public unsafe class GlfwDisplaysTests
         this.monitorA = default;
         this.monitorB = default;
 
-        fixed (Monitor* pMonitorA = &this.monitorA)
+        unsafe
         {
-            this.monitorHandleA = (nint)pMonitorA;
-        }
+            fixed (Monitor* pMonitorA = &this.monitorA)
+            {
+                this.monitorHandleA = (nint)pMonitorA;
+            }
 
-        fixed (Monitor* pMonitorB = &this.monitorB)
-        {
-            this.monitorHandleB = (nint)pMonitorB;
+            fixed (Monitor* pMonitorB = &this.monitorB)
+            {
+                this.monitorHandleB = (nint)pMonitorB;
+            }
         }
 
         this.mockGlfwInvoker = new Mock<IGlfwInvoker>();

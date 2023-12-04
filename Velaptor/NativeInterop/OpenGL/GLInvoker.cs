@@ -182,10 +182,7 @@ internal sealed class GLInvoker : IGLInvoker
     public void DrawElements(GLPrimitiveType mode, uint count, GLDrawElementsType type, nint indices)
     {
         AddToGLCallStack(nameof(DrawElements));
-        unsafe
-        {
-            this.gl.DrawElements((PrimitiveType)mode, count, (DrawElementsType)type, (void*)indices);
-        }
+        this.gl.DrawElements<nint>((PrimitiveType)mode, count, (DrawElementsType)type, indices == nint.Zero ? null : new ReadOnlySpan<nint>(indices));
     }
 
     /// <inheritdoc/>
@@ -356,21 +353,15 @@ internal sealed class GLInvoker : IGLInvoker
         AddToGLCallStack($"{nameof(BufferData)}(GLBufferTarget target, uint size, nint data, GLBufferUsageHint usage)");
         unsafe
         {
-            this.gl.BufferData((BufferTargetARB)target, size, (void*)data, (BufferUsageARB)usage);
+            this.gl.BufferData<nint>((BufferTargetARB)target, size, data, (BufferUsageARB)usage);
         }
     }
 
     /// <inheritdoc/>
-    public void BufferSubData(GLBufferTarget target, nint offset, nuint size, in float[] data)
+    public void BufferSubData(GLBufferTarget target, nint offset, nuint size, float[] data)
     {
         AddToGLCallStack($"{nameof(BufferSubData)}(GLBufferTarget target, nint offset, nuint size, float[] data)");
-        unsafe
-        {
-            fixed (void* dataPtr = data)
-            {
-                this.gl.BufferSubData<float>((BufferTargetARB)target, offset, size, data);
-            }
-        }
+        this.gl.BufferSubData<float>((BufferTargetARB)target, offset, size, data);
     }
 
     /// <inheritdoc/>
@@ -472,26 +463,20 @@ internal sealed class GLInvoker : IGLInvoker
 
     /// <inheritdoc/>
     [SuppressMessage("ReSharper", "IdentifierTypo", Justification = "Need to keep same API signature.")]
-    public void TexImage2D<T>(GLTextureTarget target, int level, GLInternalFormat internalformat, uint width, uint height, int border, GLPixelFormat format, GLPixelType type, byte[] pixels)
+    public void TexImage2D<T>(GLTextureTarget target, int level, GLInternalFormat internalformat, uint width, uint height, int border, GLPixelFormat format, GLPixelType type, T[] pixels)
         where T : unmanaged
     {
         AddToGLCallStack(nameof(TexImage2D));
-        unsafe
-        {
-            fixed (void* unmanagedPixelPtr = pixels)
-            {
-                this.gl.TexImage2D(
-                    target: (TextureTarget)target,
-                    level: level,
-                    internalformat: (int)internalformat,
-                    width: width,
-                    height: height,
-                    border: border,
-                    format: (PixelFormat)format,
-                    type: (PixelType)type,
-                    pixels: unmanagedPixelPtr);
-            }
-        }
+        this.gl.TexImage2D<T>(
+            target: (TextureTarget)target,
+            level: level,
+            internalformat: (int)internalformat,
+            width: width,
+            height: height,
+            border: border,
+            format: (PixelFormat)format,
+            type: (PixelType)type,
+            pixels: pixels);
     }
 
     /// <inheritdoc cref="IDisposable.Dispose"/>

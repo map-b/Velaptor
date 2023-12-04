@@ -381,7 +381,7 @@ internal interface IGLInvoker : IDisposable
     /// <param name="offset">Specifies the offset into the buffer object's data store where data replacement will begin, measured in bytes.</param>
     /// <param name="size">Specifies the size in bytes of the data store region being replaced.</param>
     /// <param name="data">The new data that will be copied into the data store.</param>
-    void BufferSubData(GLBufferTarget target, nint offset, nuint size, in float[] data);
+    void BufferSubData(GLBufferTarget target, nint offset, nuint size, float[] data);
 
     /// <summary>
     /// [requires: v3.0 or ARB_vertex_array_object|VERSION_3_0] Delete vertex array objects.
@@ -579,6 +579,6 @@ internal interface IGLInvoker : IDisposable
     ///     UnsignedInt8888Rev, UnsignedInt1010102, and UnsignedInt2101010Rev.
     /// </param>
     /// <param name="pixels">[length: COMPSIZE(format,type,width,height)] Specifies a pointer to the image data in memory.</param>
-    void TexImage2D<T>(GLTextureTarget target, int level, GLInternalFormat internalformat, uint width, uint height, int border, GLPixelFormat format, GLPixelType type, byte[] pixels)
+    void TexImage2D<T>(GLTextureTarget target, int level, GLInternalFormat internalformat, uint width, uint height, int border, GLPixelFormat format, GLPixelType type, T[] pixels)
         where T : unmanaged;
 }
